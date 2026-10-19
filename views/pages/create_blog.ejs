@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <%- include('../layouts/head', { title: 'New blog | Inktale' }) %>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <script src="/js/script.js" defer></script>
+  
+</head>
+<body>
+
+  <!-- 
+    - #TOP APP BAR
+  -->
+
+  <%- include('../partials/top_app_bar') %>
+
+
+  <main class="main">
+    
+    <article class="page create-blog-page">
+      <div class="container">
+
+        <h2 class="page-title text-on-surface headline-small">
+          Create blog
+        </h2>
+
+        <!-- React Live Split-Screen Markdown Editor -->
+        <div id="react-blog-editor" data-mode="create"></div>
+
+      </div>
+    </article>
+
+  </main>
+
+  
+  <!-- 
+    - #FOOTER
+  -->
+
+  <%- include('../layouts/footer') %>
+
+
+  <!-- 
+    - #SNACKBAR
+  -->
+  <div class="snackbar-wrapper" data-snackbar-wrapper></div>
+  
+</body>
+</html>

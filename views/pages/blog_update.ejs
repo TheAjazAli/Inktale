@@ -1,0 +1,69 @@
+<%
+  const {
+    _id: blogId,
+    banner: {
+      url: bannerURL
+    },
+    title,
+    content
+  } = locals.currentBlog;
+
+  const blogData = JSON.stringify({
+    id: blogId,
+    title,
+    content,
+    bannerUrl: bannerURL
+  }).replace(/"/g, '&quot;');
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <%- include('../layouts/head', { title: 'Edit blog | Inktale' }) %>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <script src="/js/script.js" defer></script>
+  
+</head>
+<body>
+
+  <!-- 
+    - #TOP APP BAR
+  -->
+
+  <%- include('../partials/top_app_bar') %>
+
+
+  <main class="main">
+    
+    <article class="page create-blog-page">
+      <div class="container">
+
+        <h2 class="page-title text-on-surface headline-small">
+          Edit blog
+        </h2>
+
+        <!-- React Live Split-Screen Markdown Editor in Edit Mode -->
+        <div id="react-blog-editor" data-mode="edit" data-blog="<%=blogData%>"></div>
+
+      </div>
+    </article>
+
+  </main>
+
+  
+  <!-- 
+    - #FOOTER
+  -->
+
+  <%- include('../layouts/footer') %>
+
+
+  <!-- 
+    - #SNACKBAR
+  -->
+  <div class="snackbar-wrapper" data-snackbar-wrapper></div>
+  
+</body>
+</html>

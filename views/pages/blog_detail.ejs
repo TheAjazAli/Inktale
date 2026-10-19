@@ -1,0 +1,205 @@
+<%
+
+  const {
+    _id: currentBlogId,
+    banner: {
+      url: bannerURL
+    },
+    title,
+    content,
+    owner: {
+      name: authorName,
+      profilePhoto: {
+        url: profilePhotoURL
+      } = {},
+      username: authorUsername
+    },
+    reaction,
+    readingTime,
+    totalBookmark,
+    createdAt
+  } = locals.blog;
+
+  const compressedBannerURL = bannerURL?.replace('upload/', 'upload/w_960,h_420,c_auto/q_auto/f_auto/');
+
+  const compressedProfilePhotoURL = profilePhotoURL?.replace('upload/', 'upload/w_40,h_40,c_auto/q_auto/f_auto/');
+
+  // Destructure logged user data
+  const {
+    readingList: userReadingListedBlogs,
+    reactedBlogs: userReactedBlogs
+  } = locals.user || {};
+
+  // Safely serialize session user for React comments
+  const currentSessionUser = locals.sessionUser;
+  const sessionUserJson = currentSessionUser ? JSON.stringify({
+    name: currentSessionUser.name,
+    username: currentSessionUser.username,
+    profilePhoto: currentSessionUser.profilePhoto
+  }).replace(/"/g, '&quot;') : '';
+
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <%- include('../layouts/head', { title: `${title} | Inktale` }) %>
+
+  <!-- 
+    - custom js link
+  -->
+  <script src="/js/script.js" defer></script>
+  <script src="/js/count_visits.js" defer></script>
+
+  <!-- 
+    - highlight.js cdn link
+  -->
+  <link rel="stylesheet" media="(prefers-color-scheme:dark)" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" media="(prefers-color-scheme:light)" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  
+</head>
+<body>
+
+  <!-- 
+    - #TOP APP BAR
+  -->
+
+  <%- include('../partials/top_app_bar') %>
+
+
+  <main class="main">
+
+    <!-- 
+      - #BLOG DETAIL
+    -->
+
+    <div class="page blog-detail-page">
+      <div class="container">
+
+        <article class="blog-detail">
+
+          <figure class="blog-banner img-holder">
+            <img src="<%=compressedBannerURL%>" width="960" height="420" alt="<%=title%>" class="img-cover">
+          </figure>
+
+          <div class="blog-author">
+
+            <% if (compressedProfilePhotoURL) { %>
+
+              <figure class="avatar">
+                <img src="<%=compressedProfilePhotoURL%>" width="40" height="40" alt="<%=authorName%>" class="img-cover">
+              </figure>
+
+            <% } else { %>
+
+              <p class="avatar title-medium">
+                <%=authorName.at()%>
+              </p>
+
+            <% } %>
+
+            <div class="leading-text">
+              <a href="/profile/<%=authorUsername%>" class="title-medium text-on-surface text-link">
+                <%=authorName%>
+              </a>
+
+              <p class="body-small text-on-surface-variant">
+                Posted on <%=new Date(createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })%>
+              </p>
+            </div>
+
+            <% if (authorUsername === locals.sessionUser?.username) { %>
+              <a href="/blogs/<%=currentBlogId%>/edit" class="btn filled-tonal">
+                <span class="material-symbols-rounded leading-icon" aria-hidden="true">
+                  edit
+                </span>
+
+                <p class="label-large">Edit</p>
+
+                <div class="state-layer"></div>
+              </a>
+            <% } %>
+
+          </div>
+
+          <div class="blog-content">
+
+            <!-- React Dynamic Table of Contents -->
+            <div id="react-toc"></div>
+
+            <h1 class="title headline-large text-on-surface">
+              <%=title%>
+            </h1>
+
+            <div class="content-markdown text-on-surface-variant">
+              <%- locals.markdown.render(content) %>
+            </div>
+
+          </div>
+
+          <!-- React Interactive Action Bar (Reactions, Bookmarks, Share, Scroll-to-comments) -->
+          <div
+            id="react-blog-actions"
+            data-blog-id="<%=currentBlogId%>"
+            data-reaction="<%=reaction%>"
+            data-bookmarks="<%=totalBookmark%>"
+            data-user-reacted="<%=userReactedBlogs?.includes(currentBlogId) ? 'true' : 'false'%>"
+            data-user-bookmarked="<%=userReadingListedBlogs?.includes(currentBlogId) ? 'true' : 'false'%>"
+            data-logged-in="<%=locals.sessionUser ? 'true' : 'false'%>"
+          ></div>
+
+        </article>
+
+        <!-- React Real-Time Comment & Discussion System (Below Article) -->
+        <section class="blog-discussion-wrapper" style="margin-top: 36px; margin-bottom: 36px;">
+          <div
+            id="react-comments"
+            data-blog-id="<%=currentBlogId%>"
+            data-session-user="<%=sessionUserJson%>"
+          ></div>
+        </section>
+
+
+        <!-- 
+         - #MORE BLOG
+        -->
+
+        <% if (locals.ownerBlogs.length) { %>
+          <section class="more-blog">
+
+            <h2 class="title title-large text-on-surface">
+              Read next
+            </h2>
+
+            <div class="blog-list">
+
+              <% locals.ownerBlogs.forEach(blog => { %>
+                <%- include('../partials/card', { blog }) %>
+              <% }) %>
+
+            </div>
+
+          </section>
+        <% } %>
+
+      </div>
+    </div>
+
+  </main>
+
+  
+  <!-- 
+    - #FOOTER
+  -->
+
+  <%- include('../layouts/footer') %>
+  
+</body>
+</html>
