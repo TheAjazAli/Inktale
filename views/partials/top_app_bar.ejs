@@ -30,6 +30,13 @@
 
   <div class="trailing-action-wrapper">
 
+    <button type="button" class="icon-btn filled-tonal" onclick="window.dispatchEvent(new CustomEvent('inktale:open-search'))" aria-label="Search articles (Ctrl+K)" title="Search (Ctrl + K)">
+      <span class="material-symbols-rounded" aria-hidden="true">
+        search
+      </span>
+      <div class="state-layer"></div>
+    </button>
+
     <% if (userAuthenticated) { %>
 
       <% if (locals.route !== '/createblog') { %>

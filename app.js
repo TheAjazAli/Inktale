@@ -33,6 +33,8 @@ const profile = require('./src/routes/profile_route');
 const dashboard = require('./src/routes/dashboard_route');
 const deleteBlog = require('./src/routes/blog_delete_route');
 const settings = require('./src/routes/settings_route');
+const search = require('./src/routes/search_route');
+const community = require('./src/routes/community_route');
 
 
 /**
@@ -126,6 +128,18 @@ app.use('/blogs', blogDetail);
  * profile page
  */
 app.use('/profile', profile);
+
+
+/**
+ * search api
+ */
+app.use('/api/search', search);
+
+
+/**
+ * community api
+ */
+app.use('/api/community', community);
 
 
 /**

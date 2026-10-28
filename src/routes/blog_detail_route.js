@@ -19,6 +19,7 @@ const renderBlogDetail = require('../controllers/blog_detail_controller');
 const { updateReaction, deleteReaction } = require('../controllers/reaction_controller');
 const { addToReadingList, removeFromReadingList } = require('../controllers/reading_list_controller');
 const updateVisit = require('../controllers/visit_controller');
+const { getComments, postComment, deleteComment } = require('../controllers/comment_controller');
 
 
 // GET route: Render the blog detail page.
@@ -38,6 +39,11 @@ router.delete('/:blogId/readingList', removeFromReadingList);
 
 // PUT route: Update blog visit
 router.put('/:blogId/visit', updateVisit);
+
+// Comments routes
+router.get('/:blogId/comments', getComments);
+router.post('/:blogId/comments', postComment);
+router.delete('/:blogId/comments/:commentId', deleteComment);
 
 
 module.exports = router;

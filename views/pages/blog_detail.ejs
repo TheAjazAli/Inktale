@@ -28,7 +28,15 @@
   const {
     readingList: userReadingListedBlogs,
     reactedBlogs: userReactedBlogs
-  } = locals.user || {}
+  } = locals.user || {};
+
+  // Safely serialize session user for React comments
+  const currentSessionUser = locals.sessionUser;
+  const sessionUserJson = currentSessionUser ? JSON.stringify({
+    name: currentSessionUser.name,
+    username: currentSessionUser.username,
+    profilePhoto: currentSessionUser.profilePhoto
+  }).replace(/"/g, '&quot;') : '';
 
 %>
 
@@ -41,8 +49,6 @@
   <!-- 
     - custom js link
   -->
-  <script type="module" src="/js/reaction.js"></script>
-  <script type="module" src="/js/reading_list.js"></script>
   <script src="/js/script.js" defer></script>
   <script src="/js/count_visits.js" defer></script>
 
@@ -125,6 +131,9 @@
 
           <div class="blog-content">
 
+            <!-- React Dynamic Table of Contents -->
+            <div id="react-toc"></div>
+
             <h1 class="title headline-large text-on-surface">
               <%=title%>
             </h1>
@@ -135,41 +144,27 @@
 
           </div>
 
-          <div class="blog-actions">
-
-            <div class="action-item">
-
-              <button class="icon-btn filled-tonal <%=userReactedBlogs?.includes(currentBlogId) ? 'active' : ''%>" data-reaction-btn>
-                <span class="material-symbols-rounded icon" aria-hidden="true">favorite</span>
-
-                <div class="state-layer"></div>
-              </button>
-
-              <p class="label-large text-on-surface-variant">
-                <span data-reaction-number><%=reaction%></span>
-                Reactions
-              </p>
-
-            </div>
-
-            <div class="action-item">
-
-              <button class="icon-btn filled-tonal <%=userReadingListedBlogs?.includes(currentBlogId) ? 'active' : ''%>" data-reading-list-btn>
-                <span class="material-symbols-rounded icon" aria-hidden="true">bookmark</span>
-
-                <div class="state-layer"></div>
-              </button>
-
-              <p class="label-large text-on-surface-variant">
-                <span data-reading-list-number><%=totalBookmark%></span>
-                Bookmarks
-              </p>
-
-            </div>
-
-          </div>
+          <!-- React Interactive Action Bar (Reactions, Bookmarks, Share, Scroll-to-comments) -->
+          <div
+            id="react-blog-actions"
+            data-blog-id="<%=currentBlogId%>"
+            data-reaction="<%=reaction%>"
+            data-bookmarks="<%=totalBookmark%>"
+            data-user-reacted="<%=userReactedBlogs?.includes(currentBlogId) ? 'true' : 'false'%>"
+            data-user-bookmarked="<%=userReadingListedBlogs?.includes(currentBlogId) ? 'true' : 'false'%>"
+            data-logged-in="<%=locals.sessionUser ? 'true' : 'false'%>"
+          ></div>
 
         </article>
+
+        <!-- React Real-Time Comment & Discussion System (Below Article) -->
+        <section class="blog-discussion-wrapper" style="margin-top: 36px; margin-bottom: 36px;">
+          <div
+            id="react-comments"
+            data-blog-id="<%=currentBlogId%>"
+            data-session-user="<%=sessionUserJson%>"
+          ></div>
+        </section>
 
 
         <!-- 
